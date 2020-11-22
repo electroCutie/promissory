@@ -14,5 +14,5 @@
 mod basic_promissory;
 
 pub use crate::basic_promissory::{
-    cloneable_promissory, promissory, Awaiter, BaseAwaiter, CloneAwaiter, Fulfiller,
+    promissory, Awaiter, BaseAwaiter, Fulfiller,
 };
