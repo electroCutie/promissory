@@ -1,11 +1,11 @@
-use std::sync::mpsc::{self, Sender, Receiver};
+use std::sync::mpsc::{self, Receiver, RecvError, Sender, SendError};
 
 /// Object which allows a one-shot fulfillment of the promissory
 pub struct Fulfiller<T>(pub(crate) Sender<T>);
 
 pub trait Awaiter<T: Send> {
     /// Attempt to retrive the computed value, blocking if nessesary
-    fn await_value(self) -> T;
+    fn await_value(self) -> Result<T, RecvError>;
 }
 
 /// Construct a Fullfiller / Awaiter pair
@@ -23,8 +23,8 @@ where
     T: Send,
 {
     /// Consume the fulfiller and awake any waiters / mark the Promissory as fulfilled
-    pub fn fulfill(self, t: T) {
-        self.0.send(t).expect("should be impossible")
+    pub fn fulfill(self, t: T) -> Result<(), SendError<T>> {
+        self.0.send(t)
     }
 }
 
@@ -32,8 +32,8 @@ where
 pub struct BaseAwaiter<T>(Receiver<T>);
 
 impl<T: Send> Awaiter<T> for BaseAwaiter<T> {
-    fn await_value(self) -> T {
-        self.0.recv().expect("should be impossile")
+    fn await_value(self) -> Result<T, RecvError> {
+        self.0.recv()
     }
 }
 
@@ -43,9 +43,10 @@ mod tests {
     use std::thread;
 
     #[test]
-    fn basic_exchange() {
+    fn basic_exchange() -> Result<(), RecvError> {
         let (send, recv) = promissory();
         thread::spawn(move || send.fulfill(42));
-        assert_eq!(42, recv.await_value());
+        assert_eq!(42, recv.await_value()?);
+        Ok(())
     }
 }
