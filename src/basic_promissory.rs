@@ -46,7 +46,8 @@ mod tests {
     fn basic_exchange() -> Result<(), RecvError> {
         let (send, recv) = promissory();
         thread::spawn(move || send.fulfill(42));
-        assert_eq!(42, recv.await_value()?);
+        let r = recv.await_value()?;
+        assert_eq!(42, r);
         Ok(())
     }
 }

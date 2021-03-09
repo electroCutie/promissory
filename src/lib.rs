@@ -9,7 +9,7 @@
 //! use promissory::{promissory, Awaiter};
 //! let (send, recv) = promissory::promissory();
 //! std::thread::spawn(move || send.fulfill(42u32));
-//! assert_eq!(42, recv.await_value());
+//! assert_eq!(42, recv.await_value().expect("this thread cannot die"));
 //! ```
 //!
 
