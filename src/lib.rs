@@ -1,5 +1,5 @@
 //! One-shot value exhange between threads. The consumer thread may await the producer thread
-//! Both the producer and consumer are single use, though there is a version of the consumer that may be cloned
+//! Both the producer and consumer are single use
 //!
 //! Just a wrapper around a std::mpsc channel with an API that makes it impossible to use more than once
 //!
@@ -15,6 +15,4 @@
 
 mod basic_promissory;
 
-pub use crate::basic_promissory::{
-    promissory, Awaiter, BaseAwaiter, Fulfiller,
-};
+pub use crate::basic_promissory::{promissory, Awaiter, Fulfiller};
